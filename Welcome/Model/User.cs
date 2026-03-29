@@ -4,6 +4,7 @@ namespace Welcome.Model
 {
     public class User
     {
+        private int _id;
         private string _names;
         private string _password;
         private string _email;
@@ -11,7 +12,14 @@ namespace Welcome.Model
         private int _failedLoginAttempts;
         private string _facultyNumber;
         private int _age;
+        private DateTime _expires;
 
+
+        public int Id
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
         public string Names
         {
             get { return _names; }
@@ -74,6 +82,12 @@ namespace Welcome.Model
         public bool IsBlocked
         {
             get { return FailedLoginAttempts > 5; }
+        }
+
+        public DateTime Expires
+        {
+            get { return _expires; }
+            set { _expires = value; }
         }
     }
 }
