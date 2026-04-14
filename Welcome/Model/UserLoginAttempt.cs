@@ -68,8 +68,8 @@ namespace Welcome.Model
 
             if (user == null)
                 throw new Exception("Потребителят не беше намерен!");
-
-            return user;
+               
+            return user;   
         }
 
         // Обновява статуса на потребителя

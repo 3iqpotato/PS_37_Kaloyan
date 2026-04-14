@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Welcome.Others;
 
 namespace Welcome.Model
 {
     public class UserRepository
     {
-        private List<User> _users;
+        protected IEnumerable<User> _users;
         private int _nextId;
 
         public UserRepository()
@@ -19,15 +16,15 @@ namespace Welcome.Model
             _users = new List<User>();
         }
 
-        public void AddUser(User user)
+        public virtual void AddUser(User user)
         {
             user.Id = _nextId++;
-            _users.Add(user);
+            _users = _users.Append(user);
         }
 
-        public void DeleteUser(User user)
+        public virtual void DeleteUser(User user)
         {
-            _users.Remove(user);
+            _users = _users.Where(u => u.Id != user.Id);
         }
 
         // С foreach
@@ -56,7 +53,7 @@ namespace Welcome.Model
             var ret = from user in _users
                       where user.Names == name && user.Password == password
                       select user.Id;
-            return ret != null ? true : false;
+            return ret != null;
         }
 
         // Връща потребител по име и парола - с LINQ

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using Welcome.Loggers;
 using Welcome.Model;
+using Welcome.Others;
 using Welcome.View;
 
 namespace Welcome.ViewModel
@@ -36,17 +32,22 @@ namespace Welcome.ViewModel
 
         public void LoginExecute()
         {
-            // Инициализираме loginAttempt
             _loginAttempt = new UserLoginAttempt(
                 UserNameText, PasswordText, _userRepository);
 
             // Стъпка 1: Валидираме полетата
             if (!_loginAttempt.Validate())
+            {
+                FileLoggerHelper.LogFailure(UserNameText, _loginAttempt.ErrorMessage);
                 return;
+            }
 
             // Стъпка 2: Проверяваме credentials
             if (!_loginAttempt.AssertCredentials())
+            {
+                FileLoggerHelper.LogFailure(UserNameText, _loginAttempt.ErrorMessage);
                 return;
+            }
 
             // Стъпка 3: Вземаме потребителя
             User user = _loginAttempt.ExecuteLoginUser();
@@ -54,11 +55,24 @@ namespace Welcome.ViewModel
             // Стъпка 4: Обновяваме статуса
             _loginAttempt.PushLoggedInStatus();
 
+            // Логваме успешния вход
+            FileLoggerHelper.LogSuccess(UserNameText);
+
             // Стъпка 5: Показваме данните
             UserViewModel userViewModel = new UserViewModel(user);
             MainWindow mainWindow = new MainWindow(userViewModel);
-            mainWindow.DisplayUser();
-            mainWindow.Show();
+
+            if (user.Role == UserRolesEnum.ADMIN)
+            {
+                AdminViewModel adminViewModel = new AdminViewModel();
+                AdminWindow adminWindow = new AdminWindow(adminViewModel);
+                adminWindow.Show();
+            }
+            else
+            {
+                mainWindow.DisplayUser();
+                mainWindow.Show();
+            }
         }
     }
 }
